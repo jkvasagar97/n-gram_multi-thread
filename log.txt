@@ -1,0 +1,31 @@
+	File treversing thread 0 started at Tue Jan 31 01:12:45 2023
+['talk.politics.mideast', 'rec.autos']
+	File treversing thread 1 started at Tue Jan 31 01:12:45 2023
+['rec.autos', 'comp.sys.mac.hardware']
+	File treversing thread 2 started at Tue Jan 31 01:12:45 2023
+['comp.sys.mac.hardware', 'alt.atheism']
+	File treversing thread 3 started at Tue Jan 31 01:12:45 2023
+['alt.atheism', 'rec.sport.baseball']
+	File treversing thread 4 started at Tue Jan 31 01:12:45 2023
+['rec.sport.baseball', 'comp.os.ms-windows.misc']
+	File treversing thread 5 started at Tue Jan 31 01:12:45 2023
+['comp.os.ms-windows.misc', 'rec.sport.hockey']
+	File treversing thread 6 started at Tue Jan 31 01:12:45 2023
+['rec.sport.hockey', 'sci.crypt']
+	File treversing thread 7 started at Tue Jan 31 01:12:45 2023
+['sci.crypt', 'sci.med']
+	File treversing thread 8 started at Tue Jan 31 01:12:45 2023
+['sci.med', 'talk.politics.misc']
+	File treversing thread 9 started at Tue Jan 31 01:12:45 2023
+['talk.politics.misc', 'rec.motorcycles']
+	File treversing thread 0 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 1 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 2 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 3 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 4 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 5 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 6 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 7 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 8 ended at Tue Jan 31 01:12:46 2023
+	File treversing thread 9 ended at Tue Jan 31 01:12:46 2023
+Time for reading is 1.2301521301269531
