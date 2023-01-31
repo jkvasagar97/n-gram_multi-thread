@@ -26,7 +26,7 @@ class cFileFolderHandle:
                 with open(path.join(classPath, file), encoding="latin-1") as fHandle:
                     for line in fHandle:
                         for word in line.split():
-                            self.wordsInClass[cl].append(word)
+                            self.wordsInClass[cl].append(word.lower())
                     
         
 
