@@ -10,7 +10,7 @@ class cFileFolderHandle:
         self.dirPath = pDirPath
         self.noThread = pNoThread
         self.threadHandles = []
-        self.wordsInClass = []
+        self.wordsInClass = {}
         self.subDirs = None
         self.fileHandles = None
 
@@ -19,13 +19,14 @@ class cFileFolderHandle:
         Reads each file into file handle, which can be used to find n grams
         """
         for cl in pClassesBatch: #Get list of all words in a class
+            self.wordsInClass[cl] = []
             classPath = path.join(self.dirPath, cl)
             files = listdir(classPath)
             for file in files:
                 with open(path.join(classPath, file), encoding="latin-1") as fHandle:
                     for line in fHandle:
                         for word in line.split():
-                            self.wordsInClass.append(word)
+                            self.wordsInClass[cl].append(word)
                     
         
 
@@ -35,11 +36,14 @@ class cFileFolderHandle:
         Uses multiple threads
         """
         self.subDirs = listdir(self.dirPath)
-        threadLoad = int(len(self.subDirs) / self.noThread)
+        batches = [[] for i in range(self.noThread)]
 
-        for i in range(0, self.noThread): #starting each thread
+        for i, dirName in enumerate(self.subDirs):#Defining batches to run in each thread
+            batches[i%self.noThread].append(dirName)
+
+        for i, batch in enumerate(batches):#starting each thread
             threadHandle = cThread("File treversing", i, 
-                                   self.treverse_classes, [self.subDirs[i:i+threadLoad]])
+                                   self.treverse_classes, ([batch]))
             threadHandle.start_thread()
             self.threadHandles.append(threadHandle)
 

@@ -12,10 +12,11 @@ def main(pDirPath, pNoThread, pNVal, pKValue):
     fileHandler.start_read()
     endTime = time.time()
     print("Time for reading is {}".format(endTime - startTime))
-    f = open("temp", "w")
-    for item in fileHandler.wordsInClass:
-        f.write(item+"\n")
-    f.close()
+    with open ("temp.txt", "w") as f:
+        for key, value in fileHandler.wordsInClass.items():
+            f.write('%s:%s\n' % (key, value))
+
+    
 
 if __name__ == "__main__": # entry point
     if len(sys.argv) != 5:
