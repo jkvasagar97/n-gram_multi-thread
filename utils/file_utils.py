@@ -16,9 +16,6 @@ class cFileFolderHandle:
         self.subDirs = None
         self.fileHandles = None
 
-    def to_lower(self,pWords):
-        return list(map(lambda x: x.lower(), pWords))
-
     def treverse_classes(self, pClassesBatch):
         """
         Reads each file into file handle, which can be used to find n grams
@@ -29,8 +26,7 @@ class cFileFolderHandle:
             files = listdir(classPath)
             for file in files:
                 with open(path.join(classPath, file), encoding="latin-1") as fHandle:
-                    words = re.split(regex_expression, fHandle.read())
-                    self.wordsInClass[cl].append(self.to_lower(words))
+                    self.wordsInClass[cl].append(re.split(regex_expression,fHandle.read().lower()))
         
 
     def start_read(self):
@@ -39,7 +35,7 @@ class cFileFolderHandle:
         Uses multiple threads
         """
         self.subDirs = listdir(self.dirPath)
-        batches = [[] for i in range(self.noThread)]
+        batches = [[] for _ in range(self.noThread)]
 
         for i, dirName in enumerate(self.subDirs):#Defining batches to run in each thread
             batches[i%self.noThread].append(dirName)

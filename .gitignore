@@ -1,5 +1,7 @@
 __pycache__/*
+./utils/__pycache__/*
 .vscode/*
 temp.txt
 .DS_Store
 log.txt
+temp.json

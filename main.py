@@ -3,6 +3,7 @@ import sys
 import time
 import json
 from utils.file_utils import cFileFolderHandle
+from utils.ngram_utils import CNgram
 
 def main(pDirPath, pNoThread, pNVal, pKValue):
     
@@ -17,13 +18,24 @@ def main(pDirPath, pNoThread, pNVal, pKValue):
     print("Number of classes: {}".format(len(fileHandler.wordsInClass)))
     for cl in fileHandler.wordsInClass.keys():
         print("\t - {} : {}".format(cl, len(fileHandler.wordsInClass[cl])))
-
-    with open("temp.json", "w") as temp: # writing words into json file
-        json.dump(fileHandler.wordsInClass, temp)
     #---------------------------------------------------------------------
 
-    
-    
+    start_time2 = time.time()
+    ngram = CNgram( pNoThread, pNVal, fileHandler.wordsInClass)
+    ngram.data_to_dict()
+    endTime2 = time.time()
+    print("Time for generating ngram is {}".format(endTime2 - start_time2))
+
+    start_time3 = time.time()
+    endTime3 = time.time()
+    print("Time for flattening json is {}".format(endTime2 - start_time2))
+
+    for x in ngram.ngram_freq[:pKValue]:
+        print(x)
+
+    print("Time for soting is {}".format(endTime3 - start_time3))
+    with open("temp.json", "w") as temp: # writing words into json file
+        json.dump(ngram.ngram_freq, temp)
 
 if __name__ == "__main__": # entry point
     if len(sys.argv) != 5:
@@ -34,5 +46,5 @@ if __name__ == "__main__": # entry point
     noThread = int(sys.argv[2])
     nVal = int(sys.argv[3])
     kVal = int(sys.argv[4])
-
+    print("filename : {}, noThread : {}, nVal : {}, kVal : {}".format(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]))
     main(filename, noThread, nVal, kVal)
