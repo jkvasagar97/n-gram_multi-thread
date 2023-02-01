@@ -7,35 +7,30 @@ from utils.ngram_utils import CNgram
 
 def main(pDirPath, pNoThread, pNVal, pKValue):
     
-    #Reading files 
+    #reading files 
     startTime = time.time()
     fileHandler = cFileFolderHandle(pDirPath, pNoThread)
     fileHandler.start_read()
     endTime = time.time()
-
-    #------------- Checking output --------------------------------------
     print("Time for reading is {}".format(endTime - startTime))
-    print("Number of classes: {}".format(len(fileHandler.wordsInClass)))
-    for cl in fileHandler.wordsInClass.keys():
-        print("\t - {} : {}".format(cl, len(fileHandler.wordsInClass[cl])))
-    #---------------------------------------------------------------------
 
-    start_time2 = time.time()
+    #generating ngrams and calculating frequency
+    startTime2 = time.time()
     ngram = CNgram( pNoThread, pNVal, fileHandler.wordsInClass)
     ngram.data_to_dict()
     endTime2 = time.time()
-    print("Time for generating ngram is {}".format(endTime2 - start_time2))
-
-    start_time3 = time.time()
+    print("Time for generating ngram is {}".format(endTime2 - startTime2))
+    #sorting
+    startTime3 = time.time()
+    sortedClasswise = {}
+    for cl in ngram.ngram_freq:
+        sortedClasswise[cl] = dict(sorted(ngram.ngram_freq[cl].items(), 
+                                key=lambda x:x[1], reverse = True))
     endTime3 = time.time()
-    print("Time for flattening json is {}".format(endTime2 - start_time2))
-
-    for x in ngram.ngram_freq[:pKValue]:
-        print(x)
-
-    print("Time for soting is {}".format(endTime3 - start_time3))
+    print("Time for sorting is {}".format(endTime3 - startTime3))
+    print("Total time: ", endTime3-startTime)
     with open("temp.json", "w") as temp: # writing words into json file
-        json.dump(ngram.ngram_freq, temp)
+        json.dump(sortedClasswise, temp)
 
 if __name__ == "__main__": # entry point
     if len(sys.argv) != 5:

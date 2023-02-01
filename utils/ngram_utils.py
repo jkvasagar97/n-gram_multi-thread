@@ -12,6 +12,7 @@ class CNgram:
 
     def comp_frequency(self, pBatch):
         for cl in pBatch:
+            self.ngram_freq[cl] = {}
             for fileinclass in self.ngrams[cl]:
                 for ngram in fileinclass:
                     if ngram in self.ngram_freq[cl]:
