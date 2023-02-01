@@ -4,6 +4,14 @@ import time
 import json
 from utils.file_utils import cFileFolderHandle
 from utils.ngram_utils import CNgram
+from utils.thread_utils import cThread
+
+GsortedClasswise = {}
+
+def sort_batches(pNgramFreq, pBatch):
+    for cl in pBatch:
+        GsortedClasswise[cl] = dict(sorted(pNgramFreq[cl].items(), 
+                                key=lambda x:x[1], reverse = True))
 
 def main(pDirPath, pNoThread, pNVal, pKValue):
     
@@ -22,15 +30,22 @@ def main(pDirPath, pNoThread, pNVal, pKValue):
     print("Time for generating ngram is {}".format(endTime2 - startTime2))
     #sorting
     startTime3 = time.time()
-    sortedClasswise = {}
-    for cl in ngram.ngram_freq:
-        sortedClasswise[cl] = dict(sorted(ngram.ngram_freq[cl].items(), 
-                                key=lambda x:x[1], reverse = True))
+    batches = [[] for _ in range(pNoThread)]
+    threadHandles = []
+    for index, cl in enumerate(ngram.ngram_freq):
+        batches[index%pNoThread].append(cl)
+    for i, batch in enumerate(batches):#starting each thread
+            threadHandle = cThread("Sorting", i, 
+                                   sort_batches, (ngram.ngram_freq, batch))
+            threadHandle.start_thread()
+            threadHandles.append(threadHandle)
+    for threadHandle in threadHandles: #waiting for threads to join
+            threadHandle.wait_thread()
     endTime3 = time.time()
     print("Time for sorting is {}".format(endTime3 - startTime3))
     print("Total time: ", endTime3-startTime)
     with open("temp.json", "w") as temp: # writing words into json file
-        json.dump(sortedClasswise, temp)
+        json.dump(GsortedClasswise, temp)
 
 if __name__ == "__main__": # entry point
     if len(sys.argv) != 5:
