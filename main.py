@@ -1,7 +1,7 @@
 
 import sys
 import time
-from utils.thread_utils import cThread
+import json
 from utils.file_utils import cFileFolderHandle
 
 def main(pDirPath, pNoThread, pNVal, pKValue):
@@ -11,11 +11,18 @@ def main(pDirPath, pNoThread, pNVal, pKValue):
     fileHandler = cFileFolderHandle(pDirPath, pNoThread)
     fileHandler.start_read()
     endTime = time.time()
-    print("Time for reading is {}".format(endTime - startTime))
-    with open ("temp.txt", "w") as f:
-        for key, value in fileHandler.wordsInClass.items():
-            f.write('%s:%s\n' % (key, value))
 
+    #------------- Checking output --------------------------------------
+    print("Time for reading is {}".format(endTime - startTime))
+    print("Number of classes: {}".format(len(fileHandler.wordsInClass)))
+    for cl in fileHandler.wordsInClass.keys():
+        print("\t - {} : {}".format(cl, len(fileHandler.wordsInClass[cl])))
+
+    with open("temp.json", "w") as temp: # writing words into json file
+        json.dump(fileHandler.wordsInClass, temp)
+    #---------------------------------------------------------------------
+
+    
     
 
 if __name__ == "__main__": # entry point

@@ -1,6 +1,8 @@
 from .thread_utils import cThread
 from os import listdir, path
+import re
 
+regex_expression = '[^a-zA-Z0-9]+'
 
 class cFileFolderHandle:
     """
@@ -14,6 +16,9 @@ class cFileFolderHandle:
         self.subDirs = None
         self.fileHandles = None
 
+    def to_lower(self,pWords):
+        return list(map(lambda x: x.lower(), pWords))
+
     def treverse_classes(self, pClassesBatch):
         """
         Reads each file into file handle, which can be used to find n grams
@@ -24,10 +29,8 @@ class cFileFolderHandle:
             files = listdir(classPath)
             for file in files:
                 with open(path.join(classPath, file), encoding="latin-1") as fHandle:
-                    for line in fHandle:
-                        for word in line.split():
-                            self.wordsInClass[cl].append(word.lower())
-                    
+                    words = re.split(regex_expression, fHandle.read())
+                    self.wordsInClass[cl].append(self.to_lower(words))
         
 
     def start_read(self):
