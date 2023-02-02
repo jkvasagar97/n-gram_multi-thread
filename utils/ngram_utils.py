@@ -4,7 +4,7 @@ class CNgram:
     # will take a portion of the overall dict and process the information and find n grams
     def __init__(self, pNoThread, pNval, pData):
         self.ngrams = {}
-        self.ngram_freq = {}
+        self.score = {}
         self.data = pData
         self.nothread = pNoThread
         self.n = pNval
@@ -12,13 +12,14 @@ class CNgram:
 
     def comp_frequency(self, pBatch):
         for cl in pBatch:
-            self.ngram_freq[cl] = {}
+            noOfFiles = len(self.data[cl])
+            self.score[cl] = {}
             for fileinclass in self.ngrams[cl]:
                 for ngram in fileinclass:
-                    if ngram in self.ngram_freq[cl]:
-                        self.ngram_freq[cl][ngram] = self.ngram_freq[cl][ngram] + 1
+                    if ngram in self.score[cl]:
+                        self.score[cl][ngram] = self.score[cl][ngram] + 1/noOfFiles
                     else:
-                        self.ngram_freq[cl][ngram] = 1
+                        self.score[cl][ngram] = 1/noOfFiles
 
     def gen_ngram(self, pBatch):
         for cl in pBatch:
@@ -28,6 +29,15 @@ class CNgram:
                 for i in range(len(fileinclass)- self.n+1):
                     output.append(" ".join(fileinclass[i:i+self.n]))
             self.ngrams[cl].append(output)
+
+    def combine_results(self):
+        self.ngrams = {}
+        for cl, ngrams in  self.score.items():
+            for ngram, frequency in ngrams.items():
+                if ngram not in self.ngrams.keys():
+                    self.ngrams[ngram] = frequency
+                elif self.ngrams[ngram] < frequency:
+                    self.ngrams[ngram] = frequency
 
     def data_to_dict(self):
         batches = [[] for _ in range(self.nothread)]
@@ -50,4 +60,4 @@ class CNgram:
             self.threadHandles.append(threadHandle)
         for threadHandle in self.threadHandles: #waiting for threads to join
             threadHandle.wait_thread()
-            
+        self.combine_results()
