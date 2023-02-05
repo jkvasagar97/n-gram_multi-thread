@@ -5,6 +5,9 @@ import threading
 import time
 
 def combine_resuts(pResults):
+    """
+    Map function to combine results from several threads
+    """
     combined_result = {}
     for cl, ngrams in pResults.items():
         for ngram, score in ngrams.items():
@@ -15,6 +18,10 @@ def combine_resuts(pResults):
     return combined_result
 
 class nGramBatchWise:
+    """
+    Class to genreate scores of n gram batchwise, that can be run using multi threading
+    and sort the results in decending order
+    """
     def __init__(self, pSourceFolderPath, pNvalue, pBatch):
         self.folder_path = pSourceFolderPath
         self.n = pNvalue
@@ -59,6 +66,9 @@ class nGramBatchWise:
             self.score[cl] = dict(sorted(self.score[cl].items(), reverse=True, key= lambda x: x[1]))
 
 def thread_function(pHandle):
+    """
+    The function run in multi threading taking the class as arguments
+    """
     pHandle.read_files()
     pHandle.gen_ngram()
     pHandle.comp_score()
@@ -99,11 +109,13 @@ if __name__=="__main__":
         combined_resuts = combined_resuts | batch_handle.score
 
     combined_resuts = combine_resuts(combined_resuts)
+
+    print("Time taken for everything other than sort {}".format(time.time() - start))
+
     combined_resuts = sorted(combined_resuts.items(), reverse=True, key= lambda x:x[1])
     print("{} - gram\t: score\n".format(nVal))
+
     for i in range(kVal):
         print("{}\t: {}".format(combined_resuts[i][0], combined_resuts[i][1]))
 
-    end=time.time()
-
-    print(end-start)
+    print("Total time taken {}".format(time.time() - start))
