@@ -26,6 +26,23 @@ def main(pDirPath, pNoThread, pNVal, pKValue):
     print(result[:pKValue])
     print("Total time:", time.time()-startTime)
 
+
+def get_max(pList):
+    max = 0
+    index = -1
+    for i, item in enumerate (pList):
+        if max < item[1]:
+            index = i
+            max = item[1]
+    return index
+
+def get_top_k(pCombinedResult, pK):
+    result = []
+    temp = []
+    while len(result) <= pK:
+        temp = [list(value.items())[0] for key, value in pCombinedResult.items()]
+        get_max(temp)
+    return result
     
 if __name__ == "__main__": # entry point
     if len(sys.argv) != 5:
