@@ -6,10 +6,10 @@ import time
 
 def combine_resuts(pResults):
     """
-    Map function to combine results from several threads
+    Reduce function to combine results from several threads
     """
     combined_result = {}
-    for cl, ngrams in pResults.items():
+    for _, ngrams in pResults.items():
         for ngram, score in ngrams.items():
             if ngram not in combined_result.keys():
                 combined_result[ngram] = score
@@ -88,34 +88,38 @@ if __name__=="__main__":
     kVal = int(sys.argv[4])
     print("filename : {}, noThread : {}, nVal : {}, kVal : {}".format(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]))
 
+    #Init batches and thread handles
     batches = [[] for _ in range(noThread)]
     batch_handles = []
     thread_handle = []
 
+    #allocating batches 
     for i, cl in enumerate(listdir(filename)):
         batches[i%noThread].append(cl)
     
+    #init and starting the thread function 
     for batch in batches:
         batch_handles.append(nGramBatchWise(filename, nVal, batch))
         thread_handle.append(threading.Thread(target= thread_function, args= [batch_handles[-1]]))
         thread_handle[-1].start()
 
+    #waiting fo the threads to join
     for thread in thread_handle:
         thread.join()
 
     combined_resuts = {}
 
+    #combining the batch wise results 
     for batch_handle in batch_handles:
         combined_resuts = combined_resuts | batch_handle.score
 
+    #reducing the ngrams accoring to the maximum score they got across classes
     combined_resuts = combine_resuts(combined_resuts)
 
     print("Time taken for everything other than sort {}".format(time.time() - start))
 
+    #sorting wrt scores, to display the top n values
     combined_resuts = sorted(combined_resuts.items(), reverse=True, key= lambda x:x[1])
-    print("{} - gram\t: score\n".format(nVal))
-
-    for i in range(kVal):
-        print("{}\t: {}".format(combined_resuts[i][0], combined_resuts[i][1]))
+    print(combined_resuts[:kVal])
 
     print("Total time taken {}".format(time.time() - start))
